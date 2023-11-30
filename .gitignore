@@ -1,5 +1,8 @@
 env
+.env.local
 ServiceAccountToken.json
+
 __pycache__
 uploads
 ```
+application_default_credentials.json
