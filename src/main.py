@@ -1,15 +1,21 @@
 from google.oauth2 import service_account
 from google.cloud import aiplatform
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_restful import Api
 from flask_cors import CORS
-from resources.upload import FileUpload
+from api.get_record_controller import GetRecords
+from api.get_record_info_controller import GetRecordInfo
+from resources.firebase import Firebase
+from api.get_user_upload_photo_controller import GetUserUploadPhoto
 from resources.photoDetect import ImageClassificationPredictionInstance
 
+UPLOAD_FOLDER = '../uploads'
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 credentials = service_account.Credentials.from_service_account_file(
@@ -52,8 +58,23 @@ prediction_instance = ImageClassificationPredictionInstance(
     api_endpoint="us-central1-aiplatform.googleapis.com"
 )
 
-api.add_resource(FileUpload, '/api/getUserUploadPhoto',
-                 resource_class_args=(prediction_instance,))
+firebase = Firebase()
+
+api.add_resource(GetUserUploadPhoto, '/api/getUserUploadPhoto',
+                 resource_class_args=(prediction_instance,
+                                      firebase,))
+
+api.add_resource(GetRecordInfo, '/api/record-info',
+                 resource_class_args=(firebase,))
+
+api.add_resource(GetRecords, '/api/records',
+                 resource_class_args=(firebase,))
+
+
+@app.route('/api/user-upload-photo/<name>')
+def user_upload_photo(name):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], name)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
