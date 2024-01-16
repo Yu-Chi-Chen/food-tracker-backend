@@ -8,6 +8,7 @@ from api.get_record_info_controller import GetRecordInfo
 from resources.firebase import Firebase
 from api.get_user_upload_photo_controller import GetUserUploadPhoto
 from resources.photoDetect import ImageClassificationPredictionInstance
+from api.delete_record_controller import DeleteRecord
 
 UPLOAD_FOLDER = '../uploads'
 
@@ -24,7 +25,7 @@ credentials = service_account.Credentials.from_service_account_file(
 aiplatform.init(
     # your Google Cloud Project ID or number
     # environment default used is not set
-    project='fine-tractor-362306',
+    project="fine-tractor-362306",
 
     # the Vertex AI region you will use
     # defaults to us-central1
@@ -53,7 +54,10 @@ aiplatform.init(
 # create instance
 prediction_instance = ImageClassificationPredictionInstance(
     project="fine-tractor-362306",
-    endpoint_id="1979879593019965440",
+    # endpoint_id="1979879593019965440",
+    # project="559469432498",
+    # endpoint_id="5098824645113544704",
+    endpoint_id="1077110177871691776",
     location="us-central1",
     api_endpoint="us-central1-aiplatform.googleapis.com"
 )
@@ -68,6 +72,9 @@ api.add_resource(GetRecordInfo, '/api/record-info',
                  resource_class_args=(firebase,))
 
 api.add_resource(GetRecords, '/api/records',
+                 resource_class_args=(firebase,))
+
+api.add_resource(DeleteRecord, '/api/deleteRecord',
                  resource_class_args=(firebase,))
 
 

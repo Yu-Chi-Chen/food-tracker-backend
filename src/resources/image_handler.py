@@ -7,4 +7,4 @@ class ImageHandler:
         filename = str(uuid.uuid4()) + ".jpg"
         file_path = os.path.join('..\\uploads', filename)
         file.save(file_path)
-        return filename
+        return filename, file_path

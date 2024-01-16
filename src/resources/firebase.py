@@ -10,8 +10,9 @@ from resources.datetime_tool import DatetimeTool
 
 class Firebase:
     # Use a service account.
-    cred = credentials.Certificate(os.getenv('GOOGLE_APPLICATION_CREDENTIALS'))
-    # cred = credentials.Certificate("src\\ServiceAccountToken.json")
+    # cred = credentials.Certificate(os.getenv('GOOGLE_APPLICATION_CREDENTIALS'))
+    cred = credentials.Certificate(
+        "healthrecord-ae765-firebase-adminsdk-mplg2-5746f48506.json")
 
     app = firebase_admin.initialize_app(cred)
     db = firestore.client()
@@ -102,3 +103,9 @@ class Firebase:
         last_pop_time = results[-1]['time']
 
         return results, last_pop_time
+
+    def delete_record(self, uid, record_id):
+        doc_ref = self.db.collection("user_information").document(
+            uid).collection("record").document(record_id)
+        doc_ref.delete()
+        return True

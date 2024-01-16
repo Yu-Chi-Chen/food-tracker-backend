@@ -2,7 +2,6 @@ from flask import request
 from flask_restful import Resource
 import json
 
-
 from resources.image_handler import ImageHandler
 from resources.image_predictor import ImagePredictor
 
@@ -28,18 +27,18 @@ class GetUserUploadPhoto(Resource):
         if file.filename == '':
             return 'No selected file', 400
 
-        file_path = self.image_handler.save_image(file)
+        file_name, file_path = self.image_handler.save_image(file)
 
         # predict
-        # try:
-        #     prediction_result = self.image_predictor.predict(file_path)
-        # except Exception as e:
-        #     return f"Error during image classification: {str(e)}", 500
+        try:
+            prediction_result = self.image_predictor.predict(file_path)
+        except Exception as e:
+            return f"Error during image classification: {str(e)}", 500
 
         # get food data
         try:
-            # food_id = "familymart_" + prediction_result
-            food_id = "familymart_rice_ball_kimchi_tuna"
+            food_id = prediction_result
+            # food_id = "familymart_rice_ball_kimchi_tuna"
             food_data = self.firebase.get_food_data(food_id)
         except Exception as e:
             return f"Error during get food data: {str(e)}", 500
@@ -74,7 +73,7 @@ class GetUserUploadPhoto(Resource):
 
         try:
             record_id = self.firebase.add_record(
-                uid, file_path, food_data['name'], food_id, food_data['熱量'], overflow_items)
+                uid, file_name, food_data['name'], food_id, food_data['熱量'], overflow_items)
             print("record_id: ", record_id)
         except Exception as e:
             return f"Error during add record: {str(e)}", 500
