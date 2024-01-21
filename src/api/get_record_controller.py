@@ -22,6 +22,7 @@ class GetRecords(Resource):
         try:
             records, last_pop_time = self.firebase.get_record(
                 uid, start_time, end_time)
+
             response = {
                 "last_pop_time": last_pop_time.strftime("%Y-%m-%d %H:%M:%S.%f"),
                 "data": [
@@ -40,4 +41,4 @@ class GetRecords(Resource):
             return response, 200
         except Exception as e:
             print(e)
-            return "Error", 400
+            return "Error", 500

@@ -10,9 +10,9 @@ from resources.datetime_tool import DatetimeTool
 
 class Firebase:
     # Use a service account.
-    # cred = credentials.Certificate(os.getenv('GOOGLE_APPLICATION_CREDENTIALS'))
-    cred = credentials.Certificate(
-        "healthrecord-ae765-firebase-adminsdk-mplg2-5746f48506.json")
+    cred = credentials.Certificate(os.getenv('GOOGLE_APPLICATION_CREDENTIALS'))
+    # cred = credentials.Certificate(
+    #     "./../healthrecord-ae765-firebase-adminsdk-mplg2-b877a0ead4.json")
 
     app = firebase_admin.initialize_app(cred)
     db = firestore.client()
@@ -99,8 +99,10 @@ class Firebase:
         ]
 
         print(f"get_record({uid}, {time_start}, {time_end}): {results}")
-
-        last_pop_time = results[-1]['time']
+        if len(results) > 0:
+            last_pop_time = results[-1]['time']
+        else:
+            last_pop_time = datetime.now()
 
         return results, last_pop_time
 
